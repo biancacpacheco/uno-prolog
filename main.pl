@@ -9,7 +9,8 @@ write('\n(4) sair do jogo\n'),
 read(Opcao), verificaOpcao(Opcao).
 
 verificaOpcao(1) :- writeln('vamos começar!\n Olha o baralho:'), geraBaralho(Baralho),
-                    write(Baralho),halt,!.
+                    write(Baralho),
+                    start(Baralho),halt,!.
 verificaOpcao(2) :- placar,!.
 verificaOpcao(3) :- regrasJogo,!.
 verificaOpcao(4) :- write('até a próxima!\n'),halt,!.
@@ -30,7 +31,33 @@ regrasJogo :-
     write('\nDigite `0.` para retornar ao Menu Principal\n'), read(_), menuStart.
 
 placar :- write('Em construção.\n'),
-write('\nDigite `0.` para retornar ao Menu Principal\n'), read(_), menuStart.
+    write('\nDigite `0.` para retornar ao Menu Principal\n'), read(_), menuStart.
+
+start(Baralho) :-
+    quantJogadores(N),
+    distribuiMaos(Baralho, N, Maos),
+    %joga(NovoBaralho, Maos, 0).
+    writeln(Baralho),
+    writeln(Maos).
+
+quantJogadores(N) :-
+    write('Você gostaria de jogar contra 1 ou contra 2 bots? '), nl,
+    read(NBots),
+    N is NBots+1,
+    writeln(N).
+
+distribuiMaos(Baralho, N, Maos) :-
+    separaCartas(Baralho, Maos, N, 7, 0).
+
+
+separaCartas(_, _, 0, _, _).
+separaCartas(Baralho, [Jogador|RestoJogadores], NumeroDeJogadores, NumeroDeCartas, JogadorCounter) :-
+    select(Jogador, Baralho, RestoBaralho),
+    length(Jogador, NumeroDeCartas),
+    ProximoJogador is JogadorCounter + 1,
+    N is NumeroDeJogadores - 1,
+    separaCartas(RestoBaralho, RestoJogadores, N, NumeroDeCartas, ProximoJogador).
+
 
 % Definição de possíveis valores para as cartas
 valor(0).
@@ -54,12 +81,14 @@ cor(amarelo).
 cor(azul).
 cor(verde).
 cor(vermelho).
+corCoringa(indefinida).
+
 
 % Definição de regra para geração do baralho, utilizando duas funções auxiliares para combinar e embaralhar as cartas
 geraBaralho(Baralho) :- 
     findall(carta(Valor, Cor), (valor(Valor), cor(Cor)), CartasColoridas1),
-    findall(carta(Valor, Cor), (valor(Valor), cor(Cor)), CartasColoridas2), % O baralho do uno deve ter duas cartas de cada cor
-    findall(carta(ValorCoringa, Cor), (valorCoringa(ValorCoringa), cor(Cor)), CartasCoringa),
+    findall(carta(Valor, Cor), (valor(Valor), cor(Cor)), CartasColoridas2), % Cada valor no uno deve ter duas cartas de cada cor
+    findall(carta(ValorCoringa, CorIndefinida), (valorCoringa(ValorCoringa), corCoringa(CorIndefinida)), CartasCoringa),
     uneCartas(CartasColoridas1, CartasColoridas2, CartasCoringa, BaralhoOrdenado),
     embaralhaBaralho(BaralhoOrdenado, Baralho).
 
