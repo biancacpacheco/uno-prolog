@@ -60,11 +60,14 @@ geraBaralho(Baralho) :-
     findall(carta(Valor, Cor), (valor(Valor), cor(Cor)), CartasColoridas1),
     findall(carta(Valor, Cor), (valor(Valor), cor(Cor)), CartasColoridas2), % O baralho do uno deve ter duas cartas de cada cor
     findall(carta(ValorCoringa, Cor), (valorCoringa(ValorCoringa), cor(Cor)), CartasCoringa),
-    uneCartas(CartasColoridas1, CartasColoridas2, CartasCoringa, Baralho).
-
+    uneCartas(CartasColoridas1, CartasColoridas2, CartasCoringa, BaralhoOrdenado),
+    embaralhaBaralho(BaralhoOrdenado, Baralho).
 
 % Definição de regra para união das cartas geradas
-uneCartas(CartasColoridas1, CartasColoridas2, CartasCoringa, Baralho) :-
+uneCartas(CartasColoridas1, CartasColoridas2, CartasCoringa, BaralhoOrdenado) :-
     append(CartasColoridas1, CartasColoridas2, CartasColoridas),
-    append(CartasColoridas, CartasCoringa, Baralho).
+    append(CartasColoridas, CartasCoringa, BaralhoOrdenado).
 
+% Definição de regra para alterar aleatoriamente a ordem das cartas previamente criadas
+embaralhaBaralho(BaralhoOrdenado, Baralho) :-
+    random_permutation(BaralhoOrdenado, Baralho).
