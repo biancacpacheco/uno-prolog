@@ -8,7 +8,7 @@ write('\n(3) regras do jogo'),
 write('\n(4) sair do jogo\n'), 
 read(Opcao), verificaOpcao(Opcao).
 
-verificaOpcao(1) :- write('vamos começar!'),halt,!.
+verificaOpcao(1) :- writeln('vamos começar!\n Olha o baralho:'),halt,!.
 verificaOpcao(2) :- placar,!.
 verificaOpcao(3) :- regrasJogo,!.
 verificaOpcao(4) :- write('até a próxima!\n'),halt,!.
@@ -30,3 +30,26 @@ regrasJogo :-
 
 placar :- write('Em construção.\n'),
 write('\nDigite `0.` para retornar ao Menu Principal\n'), read(_), menuStart.
+
+% Definição de possíveis valores para as cartas
+valor(0).
+valor(1).
+valor(2).
+valor(3).
+valor(4).
+valor(5).
+valor(6).
+valor(7).
+valor(8).
+valor(9).
+valor(pular).
+valor(inverter).
+valor(+2).
+valorCoringa(coringa).
+valorCoringa(coringa_+4).
+
+% Definição de possíveis cores
+cor(amarelo).
+cor(azul).
+cor(verde).
+cor(vermelho).
