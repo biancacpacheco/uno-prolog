@@ -8,7 +8,8 @@ write('\n(3) regras do jogo'),
 write('\n(4) sair do jogo\n'), 
 read(Opcao), verificaOpcao(Opcao).
 
-verificaOpcao(1) :- writeln('vamos começar!\n Olha o baralho:'),halt,!.
+verificaOpcao(1) :- writeln('vamos começar!\n Olha o baralho:'), geraBaralho(Baralho),
+                    write(Baralho),halt,!.
 verificaOpcao(2) :- placar,!.
 verificaOpcao(3) :- regrasJogo,!.
 verificaOpcao(4) :- write('até a próxima!\n'),halt,!.
@@ -53,3 +54,17 @@ cor(amarelo).
 cor(azul).
 cor(verde).
 cor(vermelho).
+
+% Definição de regra para geração do baralho, utilizando duas funções auxiliares para combinar e embaralhar as cartas
+geraBaralho(Baralho) :- 
+    findall(carta(Valor, Cor), (valor(Valor), cor(Cor)), CartasColoridas1),
+    findall(carta(Valor, Cor), (valor(Valor), cor(Cor)), CartasColoridas2), % O baralho do uno deve ter duas cartas de cada cor
+    findall(carta(ValorCoringa, Cor), (valorCoringa(ValorCoringa), cor(Cor)), CartasCoringa),
+    uneCartas(CartasColoridas1, CartasColoridas2, CartasCoringa, Baralho).
+
+
+% Definição de regra para união das cartas geradas
+uneCartas(CartasColoridas1, CartasColoridas2, CartasCoringa, Baralho) :-
+    append(CartasColoridas1, CartasColoridas2, CartasColoridas),
+    append(CartasColoridas, CartasCoringa, Baralho).
+
