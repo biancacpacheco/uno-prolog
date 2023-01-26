@@ -52,11 +52,23 @@ joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame):-
     JogDaVez =:= 1 -> jogadorEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho)
                     ; botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho),
     getMao(Maos, JogDaVez, Mao),
-    verificaMao(Mao, EndGame),
+    length(Mao, Tamanho),
+    verificaMao(Tamanho, EndGame),
     EndGame =:= false -> resolveProxRodada(JogDaVez, NumJog, NovoDescarte, NovoJogDaVez)
                        ; NovoJogDaVez = JogDaVez;
     joga(NovoBaralho, NovasMaos, NovoDescarte, NovoJogDaVez, NumJog, EndGame).
 
+getMao(Maos, JogDaVez, Mao):-
+    Indice is JogDaVez - 1,
+    nth0(Indice, Maos, Mao).
+
+verificaMao(0, EndGame):- 
+    EndGame = true, !.
+verificaMao(1, EndGame):- 
+    writeln('UNO!'),
+    EndGame = false, !.
+verificaMao(_, EndGame):- 
+    EndGame = false, !.
 
 quantJogadores(N) :-
     write('Você gostaria de jogar contra 1 ou contra 2 bots? '), nl,
