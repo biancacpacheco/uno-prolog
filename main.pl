@@ -8,12 +8,11 @@ write('\n(3) regras do jogo'),
 write('\n(4) sair do jogo\n'), 
 read(Opcao), verificaOpcao(Opcao).
 
-verificaOpcao(1) :- writeln('vamos começar!\n Olha o baralho:'), geraBaralho(Baralho),
-                    write(Baralho),
-                    start(Baralho),halt,!.
+verificaOpcao(1) :- writeln('vamos começar!\n Olha o baralho:'),
+                    start(), !.
 verificaOpcao(2) :- placar,!.
 verificaOpcao(3) :- regrasJogo,!.
-verificaOpcao(4) :- write('até a próxima!\n'),halt,!.
+verificaOpcao(4) :- write('até a próxima!\n'),halt.
 verificaOpcao(_) :- write('Escolha uma opção válida! \n\n'), menuStart.
 
 
@@ -33,11 +32,17 @@ regrasJogo :-
 placar :- write('Em construção.\n'),
     write('\nDigite `0.` para retornar ao Menu Principal\n'), read(_), menuStart.
 
-start(Baralho) :-
+start() :-
+    geraBaralho(Baralho),
+    writeln(Baralho), nl,
+    length(Baralho, Tamanho),
+    writeln(Tamanho), nl,
     quantJogadores(N),
-    distribuiMaos(Baralho, N, Maos),
-    %joga(NovoBaralho, Maos, 0).
-    writeln(Baralho),
+    distribuiMaos(Baralho, N, Maos, NovoBaralho),
+    writeln(NovoBaralho),
+    length(NovoBaralho, NovoTamanho),
+    writeln(NovoTamanho),
+    length(Maos, N),
     writeln(Maos).
 
 quantJogadores(N) :-
@@ -46,20 +51,24 @@ quantJogadores(N) :-
     N is NBots+1,
     writeln(N).
 
-distribuiMaos(Baralho, N, Maos) :-
-    separaCartas(Baralho, Maos, N, 7, 0).
+distribuiMaos(Baralho, N, Maos, NovoBaralho) :-
+    separaCartas(Baralho, Maos, N, 7, NovoBaralho),
+    length(NovoBaralho, Tamanho),
+    writeln(Tamanho), nl.
 
 
-separaCartas(_, _, 0, _, _).
-separaCartas(Baralho, [Jogador|RestoJogadores], NumeroDeJogadores, NumeroDeCartas, JogadorCounter) :-
-    select(Jogador, Baralho, RestoBaralho),
+separaCartas(Baralho, _, 0, _, NovoBaralho):- 
+    NovoBaralho = Baralho, !.
+separaCartas(Baralho, [Jogador|RestoJogadores], NumeroDeJogadores, NumeroDeCartas, NovoBaralho) :-
     length(Jogador, NumeroDeCartas),
-    ProximoJogador is JogadorCounter + 1,
+    append(Jogador, RestoBaralho, Baralho),
+    writeln(RestoBaralho), nl,
+    length(RestoBaralho, Tamanho),
+    writeln(Tamanho), nl,
     N is NumeroDeJogadores - 1,
-    separaCartas(RestoBaralho, RestoJogadores, N, NumeroDeCartas, ProximoJogador).
+    separaCartas(RestoBaralho, RestoJogadores, N, NumeroDeCartas, NovoBaralho).
 
 
-% Definição de possíveis valores para as cartas
 valor(0).
 valor(1).
 valor(2).
