@@ -45,6 +45,19 @@ start() :-
     length(Maos, N),
     writeln(Maos).
 
+joga(_, _, _, JogDaVez, _, true):- 
+    write('O JOGADOR '), write(JogDaVez), writeln('VENCEU!!!\n\n'), !.
+joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame):- 
+    %write('Carta da Mesa: '), writeln(Mesa),
+    JogDaVez =:= 1 -> jogadorEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho)
+                    ; botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho),
+    getMao(Maos, JogDaVez, Mao),
+    verificaMao(Mao, EndGame),
+    EndGame =:= false -> resolveProxRodada(JogDaVez, NumJog, NovoDescarte, NovoJogDaVez)
+                       ; NovoJogDaVez = JogDaVez;
+    joga(NovoBaralho, NovasMaos, NovoDescarte, NovoJogDaVez, NumJog, EndGame).
+
+
 quantJogadores(N) :-
     write('Você gostaria de jogar contra 1 ou contra 2 bots? '), nl,
     read(NBots),
@@ -68,7 +81,7 @@ separaCartas(Baralho, [Jogador|RestoJogadores], NumeroDeJogadores, NumeroDeCarta
     N is NumeroDeJogadores - 1,
     separaCartas(RestoBaralho, RestoJogadores, N, NumeroDeCartas, NovoBaralho).
 
-
+% Definição dos valores possíveis
 valor(0).
 valor(1).
 valor(2).
