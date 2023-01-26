@@ -43,32 +43,71 @@ start() :-
     length(NovoBaralho, NovoTamanho),
     writeln(NovoTamanho),
     length(Maos, N),
-    writeln(Maos).
+    writeln(Maos),
+    [Mesa|RestoBaralho] = NovoBaralho,
+    joga(RestoBaralho, Maos, [Mesa], 1, N, 0).
 
-joga(_, _, _, JogDaVez, _, true):- 
-    write('O JOGADOR '), write(JogDaVez), writeln('VENCEU!!!\n\n'), !.
+joga(_, _, _, JogDaVez, _, 1):- 
+    write('O JOGADOR '), write(JogDaVez), writeln(' VENCEU!!!\n\n'), !.
 joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame):- 
     %write('Carta da Mesa: '), writeln(Mesa),
-    JogDaVez =:= 1 -> jogadorEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho)
-                    ; botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho),
-    getMao(Maos, JogDaVez, Mao),
+    (JogDaVez =:= 1 -> jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho)
+                     ; botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho)),
+    getMao(NovasMaos, JogDaVez, Mao),
     length(Mao, Tamanho),
+    writeln(Mao), writeln(NovoDescarte), nl,
     verificaMao(Tamanho, EndGame),
-    EndGame =:= false -> resolveProxRodada(JogDaVez, NumJog, NovoDescarte, NovoJogDaVez)
-                       ; NovoJogDaVez = JogDaVez;
+    (EndGame =:= 0 -> 
+                      writeln('O jogo continua!'),
+                      resolveProxRodada(JogDaVez, NumJog, NovoDescarte, NovoJogDaVez)
+                    ; 
+                      NovoJogDaVez = JogDaVez),
     joga(NovoBaralho, NovasMaos, NovoDescarte, NovoJogDaVez, NumJog, EndGame).
+
+jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
+    [Mesa|RestoDescarte] = Descarte,
+    [Mao|MaosBots] = Maos,
+    [Topo|RestoBaralho] = Baralho,
+    writeln('Carta da Mesa:'), writeln(Mesa), nl,
+    writeln('\n\nSuas cartas:'), writeln(Mao), nl,
+    existemCartasPossiveis(Mao, Mesa, Possibilidade),
+    (Possibilidade =:= 1 -> 
+                                write('Qual carta deseja jogar? '), read(NumCarta),
+                                nth1(NumCarta, Mao, CartaJogada),
+                                writeln(CartaJogada),
+                                writeln(Mao),
+                                delete(Mao, CartaJogada, NovaMao), %delete(Elemento, Lista, ListaSemElemento)
+                                writeln(NovaMao), nl,
+                                NovasMaos = [NovaMao|MaosBots],
+                                writeln(NovasMaos), nl,
+                                NovoDescarte = [CartaJogada|Descarte],
+                                writeln(NovoDescarte), nl,
+                                NovoBaralho = Baralho,
+                                writeln(NovoBaralho), nl
+                            ;
+                                writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('),
+                                write('Pressione qualquer tecla para continuar...'), read(_), nl,
+                                append([Topo], Mao, NovaMao),
+                                delete(Topo, Baralho, NovoBaralho),
+                                NovasMaos = [NovaMao|MaosBots],
+                                NovoDescarte = Descarte).
+
+existemCartasPossiveis(Mao, Mesa, Possibilidade):-
+    Possibilidade = 1,
+    writeln('\nVamo fingir que é possível').
+
 
 getMao(Maos, JogDaVez, Mao):-
     Indice is JogDaVez - 1,
     nth0(Indice, Maos, Mao).
 
 verificaMao(0, EndGame):- 
-    EndGame = true, !.
+    EndGame = 1, !.
 verificaMao(1, EndGame):- 
     writeln('UNO!'),
-    EndGame = false, !.
+    EndGame = 0, !.
 verificaMao(_, EndGame):- 
-    EndGame = false, !.
+    EndGame = 0, !.
 
 quantJogadores(N) :-
     write('Você gostaria de jogar contra 1 ou contra 2 bots? '), nl,
