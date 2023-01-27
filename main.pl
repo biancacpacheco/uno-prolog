@@ -45,12 +45,12 @@ start() :-
     length(Maos, N),
     writeln(Maos),
     [Mesa|RestoBaralho] = NovoBaralho,
-    joga(RestoBaralho, Maos, [Mesa], 1, N, 0).
+    joga(RestoBaralho, Maos, [Mesa], 1, N, 0, 0).
 
-joga(_, _, _, JogDaVez, _, 1):- 
+joga(_, _, _, JogDaVez, _, 1, _):- 
     write('O JOGADOR '), write(JogDaVez), writeln(' VENCEU!!!\n\n'), !.
-joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame):- 
-    %write('Carta da Mesa: '), writeln(Mesa),
+joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame, Inverte):- 
+    write('\nO jogador da vez é o de número '), writeln(JogDaVez),
     (JogDaVez =:= 1 -> jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho)
                      ; botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho)),
     getMao(NovasMaos, JogDaVez, Mao),
@@ -59,10 +59,36 @@ joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame):-
     verificaMao(Tamanho, EndGame),
     (EndGame =:= 0 -> 
                       writeln('O jogo continua!'),
-                      resolveProxRodada(JogDaVez, NumJog, NovoDescarte, NovoJogDaVez)
+                      resolveProxRodada(JogDaVez, NumJog, Inverte, NovoDescarte, NovoJogDaVez, NovoInverte)
                     ; 
                       NovoJogDaVez = JogDaVez),
-    joga(NovoBaralho, NovasMaos, NovoDescarte, NovoJogDaVez, NumJog, EndGame).
+    joga(NovoBaralho, NovasMaos, NovoDescarte, NovoJogDaVez, NumJog, EndGame, NovoInverte).
+
+resolveProxRodada(JogDaVez, NumJog, Inverte, [Mesa|RestoDescarte], NovoJogDaVez, NovoInverte) :-
+    carta(CorMesa, ValorMesa) = Mesa,
+    verificaInversao(ValorMesa, Inverte, NovoInverte),
+    verificaProxJogador(JogDaVez, ValorMesa, NumJog, NovoJogDaVez, NovoInverte).
+    
+verificaProxJogador(JogDaVez, ValorMesa, NumJog, NovoJogDaVez, 0):- 
+    (ValorMesa == pular -> passaJogador(JogDaVez, NumJog, NovoJogDaVez, 2)
+                        ; passaJogador(JogDaVez, NumJog, NovoJogDaVez, 1)).
+verificaProxJogador(JogDaVez, ValorMesa, NumJog, NovoJogDaVez, 1):- 
+    (ValorMesa == pular -> passaJogador(JogDaVez, NumJog, NovoJogDaVez, -2)
+                        ; passaJogador(JogDaVez, NumJog, NovoJogDaVez, -1)).
+
+passaJogador(JogDaVez, NumJog, NovoJogDaVez, Passo):-
+    Passada is JogDaVez + Passo,
+    (Passada > NumJog -> NovoJogDaVez is Passada - JogDaVez
+                       ; (Passada < 1 -> NovoJogDaVez is NumJog + Passada
+                                       ; NovoJogDaVez = Passada)).
+
+
+
+verificaInversao(inveter, 1, 0).
+verificaInversao(inveter, 0, 1).
+verificaInversao(_, 1, 1).
+verificaInversao(_, 0, 0).
+
 
 jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
     [Mesa|RestoDescarte] = Descarte,
@@ -95,6 +121,12 @@ jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
 existemCartasPossiveis(Mao, Mesa, Possibilidade):-
     Possibilidade = 1,
     writeln('\nVamo fingir que é possível').
+
+ehValida(CartaEscolhida, Mesa):-
+    carta(Cor, Valor) = CartaEscolhida,
+    carta(CorMesa, ValorMesa) = Mesa,
+    (Cor = CorMesa ; Valor = ValorMesa ; Cor = indefinida).
+
 
 
 getMao(Maos, JogDaVez, Mao):-
