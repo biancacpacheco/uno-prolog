@@ -1,3 +1,8 @@
+:- dynamic vitorias/1, derrotas/1.
+
+vitorias(0).
+derrotas(0).
+
 main:- write('BEM-VINDO, JOGADOR! :)\n'),
 write(''), menuStart.
 
@@ -29,7 +34,11 @@ regrasJogo :-
     write('----------------------------------------------------------------------'),
     write('\nDigite `0.` para retornar ao Menu Principal\n'), read(_), menuStart.
 
-placar :- write('Em construção.\n'),
+placar :- 
+    vitorias(V),
+    derrotas(D),
+    write('Vitórias: '), write(V), nl,
+    write('Derrotas: '), write(D), nl,
     write('\nDigite `0.` para retornar ao Menu Principal\n'), read(_), menuStart.
 
 start() :-
@@ -205,3 +214,15 @@ uneCartas(CartasColoridas1, CartasColoridas2, CartasCoringa, BaralhoOrdenado) :-
 % Definição de regra para alterar aleatoriamente a ordem das cartas previamente criadas
 embaralhaBaralho(BaralhoOrdenado, Baralho) :-
     random_permutation(BaralhoOrdenado, Baralho).
+
+registrar_vitoria :-
+    vitorias(VitoriasAtuais),
+    NovasVitorias is VitoriasAtuais + 1,
+    retract(vitorias(VitoriasAtuais)),
+    asserta(vitorias(NovasVitorias)).
+
+registrar_derrota :-
+    derrotas(DerrotasAtuais),
+    NovasDerrotas is DerrotasAtuais + 1,
+    retract(derrotas(DerrotasAtuais)),
+    asserta(derrotas(NovasDerrotas)).
