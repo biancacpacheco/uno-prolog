@@ -1,3 +1,4 @@
+
 :- dynamic vitorias/1, derrotas/1.
 
 vitorias(0).
@@ -12,6 +13,7 @@ write('\n(2) histórico de pontuação'),
 write('\n(3) regras do jogo'),
 write('\n(4) sair do jogo\n'), 
 read(Opcao), verificaOpcao(Opcao).
+
 
 verificaOpcao(1) :- writeln('vamos começar!\n Olha o baralho:'),
                     start(), !.
@@ -33,6 +35,7 @@ regrasJogo :-
     write('Curinga: O jogador que lançou essa carta escolhe a nova cor que continuará no jogo.\n'),
     write('----------------------------------------------------------------------'),
     write('\nDigite `0.` para retornar ao Menu Principal\n'), read(_), menuStart.
+
 
 placar :- 
     vitorias(V),
@@ -173,7 +176,11 @@ separaCartas(Baralho, [Jogador|RestoJogadores], NumeroDeJogadores, NumeroDeCarta
     N is NumeroDeJogadores - 1,
     separaCartas(RestoBaralho, RestoJogadores, N, NumeroDeCartas, NovoBaralho).
 
-% Definição dos valores possíveis
+
+
+
+% Definição de possíveis valores para as cartas
+
 valor(0).
 valor(1).
 valor(2).
@@ -195,6 +202,8 @@ cor(amarelo).
 cor(azul).
 cor(verde).
 cor(vermelho).
+
+
 corCoringa(indefinida).
 
 
@@ -226,3 +235,4 @@ registrar_derrota :-
     NovasDerrotas is DerrotasAtuais + 1,
     retract(derrotas(DerrotasAtuais)),
     asserta(derrotas(NovasDerrotas)).
+
