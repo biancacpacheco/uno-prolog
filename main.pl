@@ -108,9 +108,10 @@ jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
     [Topo|RestoBaralho] = Baralho,
     writeln('Carta da Mesa:'), writeln(Mesa), nl,
     writeln('\n\nSuas cartas:'), writeln(Mao), nl,
-    existemCartasPossiveis(Mao, Mesa, Possibilidade),
-    (Possibilidade =:= 1 -> 
-                                write('Qual carta deseja jogar? '), read(NumCarta),
+    % existemCartasPossiveis([], Mesa),
+    % write(Possibilidade),
+    existemCartasPossiveis(Mao, Mesa) -> 
+                                (write('Qual carta deseja jogar? '), read(NumCarta),
                                 nth1(NumCarta, Mao, CartaJogada),
                                 writeln(CartaJogada),
                                 writeln(Mao),
@@ -121,18 +122,28 @@ jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
                                 NovoDescarte = [CartaJogada|Descarte],
                                 writeln(NovoDescarte), nl,
                                 NovoBaralho = Baralho,
-                                writeln(NovoBaralho), nl
+                            writeln(NovoBaralho), nl)
                             ;
-                                writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('),
+                                (writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('),
                                 write('Pressione qualquer tecla para continuar...'), read(_), nl,
-                                append([Topo], Mao, NovaMao),
-                                delete(Topo, Baralho, NovoBaralho),
-                                NovasMaos = [NovaMao|MaosBots],
-                                NovoDescarte = Descarte).
+                                ehValida(Topo,Mesa) -> (append([Topo],Descarte, NovoDescarte), 
+                                                        delete(Topo, Baralho, NovoBaralho), NovasMaos = [Mao|MaosBots]) ;
+                                
+                                                    append([Topo], Mao, NovaMao),
+                                                    delete(Topo, Baralho, NovoBaralho),
+                                                    NovasMaos = [NovaMao|MaosBots],
+                                                    NovoDescarte = Descarte).
 
-existemCartasPossiveis(Mao, Mesa, Possibilidade):-
-    Possibilidade = 1,
-    writeln('\nVamo fingir que é possível').
+% %  existemCartasPossiveis(Mao,Mesa,1)
+
+% existemCartasPossiveis([],_, Possibilidade):- Possibilidade = 0, write(Possibilidade).
+% existemCartasPossiveis([M:Resto],Mesa, Possibilidade) :- ehValida(M,Mesa), Possibilidade = 1,!. 
+% existemCartasPossiveis([M:Resto],Mesa, Possibilidade) :- existemCartasPossiveis(Resto,Mesa,Possibilidade).
+%     % writeln('\nVamo fingir que é possível').
+
+existemCartasPossiveis([], _) :- fail.
+existemCartasPossiveis([Carta|Resto], Mesa) :- ehValida(Carta, Mesa) ; existemCartasPossiveis(Resto, Mesa).
+
 
 ehValida(CartaEscolhida, Mesa):-
     carta(Cor, Valor) = CartaEscolhida,
@@ -154,7 +165,7 @@ verificaMao(_, EndGame):-
     EndGame = 0, !.
 
 quantJogadores(N) :-
-    write('Você gostaria de jogar contra 1 ou contra 2 bots? '), nl,
+    write('Você gostaria de jogar contra 2 ou contra 3 bots? '), nl,
     read(NBots),
     N is NBots+1,
     writeln(N).
