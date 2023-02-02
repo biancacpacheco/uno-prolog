@@ -154,7 +154,10 @@ botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaral
     writeln('Carta da Mesa:'), writeln(Mesa), nl,
     writeln('\n\ncartas do bot:'), writeln(Mao), nl, %só pra visualizar enquanto projeta
     existemCartasPossiveis(Mao, Mesa) -> 
-                                (write('Qual carta deseja jogar? '), read(NumCarta),
+                                % (write('Qual carta deseja jogar? '), read(NumCarta),
+                                jogaPrimeiraPossivel(Mao,Mesa,0,IndiceNaMao),
+                                write(IndiceNaMao), %apaga isso!!!
+                                NumCarta is IndiceNaMao + 1,
                                 nth1(NumCarta, Mao, CartaJogada),
                                 writeln(CartaJogada),
                                 writeln(Mao),
@@ -165,7 +168,7 @@ botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaral
                                 NovoDescarte = [CartaJogada|Descarte],
                                 writeln(NovoDescarte), nl,
                                 NovoBaralho = Baralho,
-                            writeln(NovoBaralho), nl)
+                            writeln(NovoBaralho), nl
                             ;
                                 (writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('), nl,
                                 ehValida(Topo,Mesa) -> (append([Topo],Descarte, NovoDescarte), 
@@ -179,6 +182,14 @@ botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaral
 replace(JogDaVez, Maos, Mao, NovasMaos) :-
     nth0(JogDaVez, Maos, _, R),
     nth0(JogDaVez,NovasMaos, Mao, R).
+
+
+jogaPrimeiraPossivel([M|[]],Mesa,CartaAtual,IndiceNaMao) :-  IndiceNaMao = CartaAtual.
+jogaPrimeiraPossivel([M|Mao],Mesa,CartaAtual,IndiceNaMao) :- ehValida(M,Mesa), IndiceNaMao = CartaAtual 
+                                                            ;
+                                                             NewCartaAtual is CartaAtual + 1,
+                                                             jogaPrimeiraPossivel([Mao],Mesa,NewCartaAtual,IndiceNaMao). 
+
 
 existemCartasPossiveis([], _) :- fail.
 existemCartasPossiveis([Carta|Resto], Mesa) :- ehValida(Carta, Mesa) ; existemCartasPossiveis(Resto, Mesa).
