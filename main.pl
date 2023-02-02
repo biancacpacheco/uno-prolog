@@ -124,8 +124,7 @@ jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
                                 NovoBaralho = Baralho,
                             writeln(NovoBaralho), nl)
                             ;
-                                (writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('),
-                                write('Pressione qualquer tecla para continuar...'), read(_), nl,
+                                (writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('), nl,
                                 ehValida(Topo,Mesa) -> (append([Topo],Descarte, NovoDescarte), 
                                                         delete(Topo, Baralho, NovoBaralho), NovasMaos = [Mao|MaosBots]) ;
                                 
@@ -134,12 +133,41 @@ jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
                                                     NovasMaos = [NovaMao|MaosBots],
                                                     NovoDescarte = Descarte).
 
-% %  existemCartasPossiveis(Mao,Mesa,1)
 
-% existemCartasPossiveis([],_, Possibilidade):- Possibilidade = 0, write(Possibilidade).
-% existemCartasPossiveis([M:Resto],Mesa, Possibilidade) :- ehValida(M,Mesa), Possibilidade = 1,!. 
-% existemCartasPossiveis([M:Resto],Mesa, Possibilidade) :- existemCartasPossiveis(Resto,Mesa,Possibilidade).
-%     % writeln('\nVamo fingir que é possível').
+botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
+    [Mesa|RestoDescarte] = Descarte,
+    writeln(JogDaVez),
+    Indice is JogDaVez-1,
+    nth0(Indice,Maos,Mao),
+    [Topo|RestoBaralho] = Baralho,
+    writeln('Carta da Mesa:'), writeln(Mesa), nl,
+    writeln('\n\ncartas do bot:'), writeln(Mao), nl, %só pra visualizar enquanto projeta
+    existemCartasPossiveis(Mao, Mesa) -> 
+                                (write('Qual carta deseja jogar? '), read(NumCarta),
+                                nth1(NumCarta, Mao, CartaJogada),
+                                writeln(CartaJogada),
+                                writeln(Mao),
+                                delete(Mao, CartaJogada, NovaMao), %delete(Elemento, Lista, ListaSemElemento)
+                                writeln(NovaMao), nl,
+                                replace(Indice,Maos,NovaMao,NovasMaos),
+                                writeln(NovasMaos), nl,
+                                NovoDescarte = [CartaJogada|Descarte],
+                                writeln(NovoDescarte), nl,
+                                NovoBaralho = Baralho,
+                            writeln(NovoBaralho), nl)
+                            ;
+                                (writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('), nl,
+                                ehValida(Topo,Mesa) -> (append([Topo],Descarte, NovoDescarte), 
+                                                        delete(Topo, Baralho, NovoBaralho), NovasMaos = Maos) ;
+                                
+                                                    append([Topo], Mao, NovaMao),
+                                                    delete(Topo, Baralho, NovoBaralho),
+                                                    replace(Indice,Maos,NovaMao,NovasMaos),
+                                                    NovoDescarte = Descarte).
+
+replace(JogDaVez, Maos, Mao, NovasMaos) :-
+    nth0(JogDaVez, Maos, _, R),
+    nth0(JogDaVez,NovasMaos, Mao, R).
 
 existemCartasPossiveis([], _) :- fail.
 existemCartasPossiveis([Carta|Resto], Mesa) :- ehValida(Carta, Mesa) ; existemCartasPossiveis(Resto, Mesa).
