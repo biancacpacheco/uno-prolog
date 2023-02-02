@@ -57,7 +57,7 @@ start() :-
     length(Maos, N),
     writeln(Maos),
     [Mesa|RestoBaralho] = NovoBaralho,
-    inicio_eh_coringa(RestoBaralho, Maos, [carta(coringa,indefinida)], 1, N, 0, 0).
+    inicio_eh_coringa(RestoBaralho, Maos, [Mesa], 1, N, 0, 0).
 
 inicio_eh_coringa(RestoBaralho, Maos, [Mesa], 1, N, 0, 0):-
     joga(RestoBaralho, Maos, [Mesa], 1, N, 0, 0).
