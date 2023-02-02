@@ -57,14 +57,18 @@ start() :-
     length(Maos, N),
     writeln(Maos),
     [Mesa|RestoBaralho] = NovoBaralho,
-    joga(RestoBaralho, Maos, [Mesa], 1, N, 0, 0).
+    inicio_eh_coringa(RestoBaralho, Maos, [carta(coringa,indefinida)], 1, N, 0, 0).
 
 inicio_eh_coringa(RestoBaralho, Maos, [Mesa], 1, N, 0, 0):-
     joga(RestoBaralho, Maos, [Mesa], 1, N, 0, 0).
-inicio_eh_coringa(RestoBaralho, Maos, [carta(coringa,indefinida)], 1, N, 0, 0):-
-    joga(RestoBaralho, Maos,[carta(coringa, vermelho)], 1, N, 0, 0).
-inicio_ehcoringa(RestoBaralho, Maos, [carta(coringa+4,indefinida)], 1, N, 0, 0):-
-    joga(RestoBaralho, Maos,[carta(coringa_+4, vermelho)], 1, N, 0, 0).
+
+inicio_eh_coringa(RestoBaralho, Maos, [carta(coringa,_)], 1, N, 0, 0):-
+    escolher_cor_aleatoria(Cor),
+    joga(RestoBaralho, Maos,[carta(coringa,Cor)], 1, N, 0, 0).
+
+inicio_ehcoringa(RestoBaralho, Maos, [carta(coringa+4,_)], 1, N, 0, 0):-
+    escolher_cor_aleatoria(Cor),
+    joga(RestoBaralho, Maos,[carta(coringa_+4,Cor)], 1, N, 0, 0).
 
 joga(_, _, _, JogDaVez, _, 1, _):- 
     write('O JOGADOR '), write(JogDaVez), writeln(' VENCEU!!!\n\n'), !.
@@ -282,3 +286,8 @@ registrar_derrota :-
     retract(derrotas(DerrotasAtuais)),
     asserta(derrotas(NovasDerrotas)).
 
+cores([vermelho, azul, amarelo, verde]).
+
+escolher_cor_aleatoria(Cor) :-     
+    cores(Cores),     
+    random_member(Cor, Cores).
