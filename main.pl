@@ -15,11 +15,11 @@ write('\n(4) sair do jogo\n'),
 read(Opcao), verificaOpcao(Opcao).
 
 
-verificaOpcao(1) :- writeln('vamos começar!\n Olha o baralho:'),
+verificaOpcao(1) :- writeln('Vamos começar!\n Olha o baralho:'),
                     start(), !.
-verificaOpcao(2) :- placar,!.
-verificaOpcao(3) :- regrasJogo,!.
-verificaOpcao(4) :- write('até a próxima!\n'),halt.
+verificaOpcao(2) :- placar, !.
+verificaOpcao(3) :- regrasJogo, !.
+verificaOpcao(4) :- write('Até a próxima!\n'), halt.
 verificaOpcao(_) :- write('Escolha uma opção válida! \n\n'), menuStart.
 
 
@@ -74,15 +74,15 @@ joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame, Inverte):-
     getMao(NovasMaos, JogDaVez, Mao),
     length(Mao, Tamanho),
     writeln(Mao), writeln(NovoDescarte), nl,
-    verificaMao(Tamanho, EndGame),
-    (EndGame = 0 -> 
+    verificaMao(Tamanho, NovoEndGame),
+    (NovoEndGame = 0 -> 
                       writeln('O jogo continua!'),
                       resolveProxRodada(JogDaVez, NumJog, Inverte, NovoDescarte, NovoJogDaVez, NovoInverte)
                     ; 
                       NovoJogDaVez = JogDaVez),
     writeln(NovoInverte),
     writeln(NovoJogDaVez),
-    joga(NovoBaralho, NovasMaos, NovoDescarte, NovoJogDaVez, NumJog, EndGame, NovoInverte).
+    joga(NovoBaralho, NovasMaos, NovoDescarte, NovoJogDaVez, NumJog, NovoEndGame, NovoInverte).
 
 resolveProxRodada(JogDaVez, NumJog, Inverte, [Mesa|RestoDescarte], NovoJogDaVez, NovoInverte) :-
     verificaInversao(Mesa, Inverte, NovoInverte),
