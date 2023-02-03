@@ -65,8 +65,8 @@ inicio_ehcoringa(RestoBaralho, Maos, [carta(coringa+4,_)], 1, N, 0, 0):-
 
 joga(_, _, _, JogDaVez, _, 1, _):- 
     write('O JOGADOR '), write(JogDaVez), writeln(' VENCEU!!!\n\n'),
-    ((JogDaVez =:= 1) -> (registrar_vitoria ;
-                        registrar_derrota)) , !.
+    ((JogDaVez =:= 1) -> registrar_vitoria ;
+                        registrar_derrota), !.
 joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame, Inverte):- 
     write('\nO jogador da vez é o de número '), writeln(JogDaVez),
     (JogDaVez =:= 1 -> jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho)
@@ -75,11 +75,13 @@ joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame, Inverte):-
     length(Mao, Tamanho),
     writeln(Mao), writeln(NovoDescarte), nl,
     verificaMao(Tamanho, EndGame),
-    (EndGame =:= 0 -> 
+    (EndGame = 0 -> 
                       writeln('O jogo continua!'),
                       resolveProxRodada(JogDaVez, NumJog, Inverte, NovoDescarte, NovoJogDaVez, NovoInverte)
                     ; 
                       NovoJogDaVez = JogDaVez),
+    writeln(NovoInverte),
+    writeln(NovoJogDaVez),
     joga(NovoBaralho, NovasMaos, NovoDescarte, NovoJogDaVez, NumJog, EndGame, NovoInverte).
 
 resolveProxRodada(JogDaVez, NumJog, Inverte, [Mesa|RestoDescarte], NovoJogDaVez, NovoInverte) :-
@@ -87,10 +89,10 @@ resolveProxRodada(JogDaVez, NumJog, Inverte, [Mesa|RestoDescarte], NovoJogDaVez,
     verificaProxJogador(JogDaVez, Mesa, NumJog, NovoJogDaVez, NovoInverte).
     
 verificaProxJogador(JogDaVez, Mesa, NumJog, NovoJogDaVez, 0):- 
-    (Mesa = carta(_, pular) -> passaJogador(JogDaVez, NumJog, NovoJogDaVez, 2)
+    (Mesa = carta(pular, _) -> passaJogador(JogDaVez, NumJog, NovoJogDaVez, 2)
                         ; passaJogador(JogDaVez, NumJog, NovoJogDaVez, 1)).
 verificaProxJogador(JogDaVez, Mesa, NumJog, NovoJogDaVez, 1):- 
-    (Mesa = carta(_, pular) -> passaJogador(JogDaVez, NumJog, NovoJogDaVez, -2)
+    (Mesa = carta(pular, _) -> passaJogador(JogDaVez, NumJog, NovoJogDaVez, -2)
                         ; passaJogador(JogDaVez, NumJog, NovoJogDaVez, -1)).
 
 passaJogador(JogDaVez, NumJog, NovoJogDaVez, Passo):-
@@ -101,18 +103,18 @@ passaJogador(JogDaVez, NumJog, NovoJogDaVez, Passo):-
 
 
 
-verificaInversao(carta(_, inverter), 1, 0).
-verificaInversao(carta(_, inverter), 0, 1).
-verificaInversao(_, 1, 1).
-verificaInversao(_, 0, 0).
+verificaInversao(carta(inverter,_), 1, 0):- !.
+verificaInversao(carta(inverter,_), 0, 1):- !.
+verificaInversao(_, 1, 1):- !.
+verificaInversao(_, 0, 0):- !.
 
 
 jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
     [Mesa|RestoDescarte] = Descarte,
     [Mao|MaosBots] = Maos,
     [Topo|RestoBaralho] = Baralho,
-    writeln('Carta da Mesa:'), writeln(Mesa),
-    writeln('\n\nSuas cartas:'), writeln(Mao), nl,
+    write('Carta da Mesa: '), writeln(Mesa), nl,
+    write('\nSuas cartas: '), writeln(Mao), nl,
     % existemCartasPossiveis([], Mesa),
     % write(Possibilidade),
     (existemCartasPossiveis(Mao, Mesa) -> 
@@ -127,7 +129,7 @@ jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
                                                                 NovoDescarte = [CartaJogada|Descarte],
                                                                 writeln(NovoDescarte), nl,
                                                                 NovoBaralho = Baralho,
-                                                                writeln('Pressione qualquer tecla para continuar...'), read(_), nl
+                                                                write('Pressione qualquer tecla para passar a vez... '), read(_), nl
                                                             ;   
                                                                 writeln('Escolha uma carta válida!\n'),
                                                                 jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho))
@@ -146,8 +148,8 @@ botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaral
     Indice is JogDaVez-1,
     nth0(Indice,Maos,Mao),
     [Topo|RestoBaralho] = Baralho,
-    writeln('Carta da Mesa:'), writeln(Mesa), nl,
-    writeln('\n\ncartas do bot:'), writeln(Mao), nl, %só pra visualizar enquanto projeta
+    write('Carta da Mesa: '), writeln(Mesa), nl,
+    write('\nCartas do bot: '), writeln(Mao), nl, %só pra visualizar enquanto projeta
     (existemCartasPossiveis(Mao, Mesa) -> 
                                 % (write('Qual carta deseja jogar? '), read(NumCarta),
                                 jogaPrimeiraPossivel(Mao,Mesa,0,IndiceNaMao),
@@ -158,10 +160,11 @@ botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaral
                                 replace(Indice,Maos,NovaMao,NovasMaos),
                                 NovoDescarte = [CartaJogada|Descarte],
                                 writeln(NovoDescarte), nl,
-                                NovoBaralho = Baralho
+                                NovoBaralho = Baralho,
+                                write('Pressione qualquer tecla para passar a vez... '), read(_), nl
                             ;
                                 writeln('O bot não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :D'), nl,
-                                write('Pressione qualquer tecla para continuar...'), nl,
+                                write('Pressione qualquer tecla para passar a vez...'), nl,
                                 NovaMao = [Topo|Mao],
                                 delete(Baralho, Topo, NovoBaralho),
                                 replace(Indice,Maos,NovaMao,NovasMaos),
