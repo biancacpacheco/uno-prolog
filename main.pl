@@ -184,11 +184,10 @@ replace(JogDaVez, Maos, Mao, NovasMaos) :-
     nth0(JogDaVez,NovasMaos, Mao, R).
 
 
-jogaPrimeiraPossivel([M|[]],Mesa,CartaAtual,IndiceNaMao) :-  IndiceNaMao = CartaAtual.
-jogaPrimeiraPossivel([M|Mao],Mesa,CartaAtual,IndiceNaMao) :- ehValida(M,Mesa), IndiceNaMao = CartaAtual 
-                                                            ;
-                                                             NewCartaAtual is CartaAtual + 1,
-                                                             jogaPrimeiraPossivel([Mao],Mesa,NewCartaAtual,IndiceNaMao). 
+jogaPrimeiraPossivel([M|Resto],Mesa,CartaAtual,IndiceNaMao) :- ehValida(M,Mesa) -> (IndiceNaMao is CartaAtual),! 
+                                                                                ;
+                                                                                NewCartaAtual is CartaAtual + 1,
+                                                                                jogaPrimeiraPossivel(Resto,Mesa,NewCartaAtual,IndiceNaMao). 
 
 
 existemCartasPossiveis([], _) :- fail.
