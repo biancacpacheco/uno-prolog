@@ -71,7 +71,9 @@ inicio_ehcoringa(RestoBaralho, Maos, [carta(coringa+4,_)], 1, N, 0, 0):-
     joga(RestoBaralho, Maos,[carta(coringa_+4,Cor)], 1, N, 0, 0).
 
 joga(_, _, _, JogDaVez, _, 1, _):- 
-    write('O JOGADOR '), write(JogDaVez), writeln(' VENCEU!!!\n\n'), !.
+    write('O JOGADOR '), write(JogDaVez), writeln(' VENCEU!!!\n\n'),
+    ((JogDaVez =:= 1) -> (registrar_vitoria ;
+                        registrar_derrota)) , !.
 joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame, Inverte):- 
     write('\nO jogador da vez é o de número '), writeln(JogDaVez),
     (JogDaVez =:= 1 -> jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho)
