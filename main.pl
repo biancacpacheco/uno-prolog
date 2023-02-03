@@ -135,19 +135,18 @@ jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
                                                                 writeln(NovasMaos), nl,
                                                                 NovoDescarte = [CartaJogada|Descarte],
                                                                 writeln(NovoDescarte), nl,
-                                                                NovoBaralho = Baralho,
-                                                                writeln(NovoBaralho), nl
+                                                                NovoBaralho = Baralho
                                                             ;   
                                                                 writeln('Escolha uma carta válida!\n'),
                                                                 jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho))
                             ;
                                 writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('), nl,
-                                writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('),
-                                write('Pressione qualquer tecla para continuar...'), read(_), nl,
-                                append([Topo], Mao, NovaMao),
-                                delete(Topo, Baralho, NovoBaralho),
+                                write('Pressione qualquer tecla para continuar...'), nl,
+                                NovaMao = [Topo|Mao],
+                                writeln('Até aqui nao eh false'),
+                                delete(Baralho, Topo, NovoBaralho),
                                 NovasMaos = [NovaMao|MaosBots],
-                                NovoDescarte = Descarte).
+                                NovoDescarte = Descarte, read(_), nl).
 
 
 botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
@@ -158,7 +157,7 @@ botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaral
     [Topo|RestoBaralho] = Baralho,
     writeln('Carta da Mesa:'), writeln(Mesa), nl,
     writeln('\n\ncartas do bot:'), writeln(Mao), nl, %só pra visualizar enquanto projeta
-    existemCartasPossiveis(Mao, Mesa) -> 
+    (existemCartasPossiveis(Mao, Mesa) -> 
                                 % (write('Qual carta deseja jogar? '), read(NumCarta),
                                 jogaPrimeiraPossivel(Mao,Mesa,0,IndiceNaMao),
                                 write(IndiceNaMao), %apaga isso!!!
@@ -173,16 +172,16 @@ botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaral
                                 NovoDescarte = [CartaJogada|Descarte],
                                 writeln(NovoDescarte), nl,
                                 NovoBaralho = Baralho,
-                            writeln(NovoBaralho), nl
+                                writeln(NovoBaralho), nl
                             ;
-                                (writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('), nl,
-                                ehValida(Topo,Mesa) -> (append([Topo],Descarte, NovoDescarte), 
-                                                        delete(Topo, Baralho, NovoBaralho), NovasMaos = Maos) ;
-                                
-                                                    append([Topo], Mao, NovaMao),
-                                                    delete(Topo, Baralho, NovoBaralho),
-                                                    replace(Indice,Maos,NovaMao,NovasMaos),
-                                                    NovoDescarte = Descarte).
+                                writeln('O bot não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :D'), nl,
+                                write('Pressione qualquer tecla para continuar...'), nl,
+                                NovaMao = [Topo|Mao],
+                                delete(Baralho, Topo, NovoBaralho),
+                                writeln('ate aqui não eh false'),
+                                replace(Indice,Maos,NovaMao,NovasMaos),
+                                NovoDescarte = Descarte, read(_), nl).
+
 
 replace(JogDaVez, Maos, Mao, NovasMaos) :-
     nth0(JogDaVez, Maos, _, R),
