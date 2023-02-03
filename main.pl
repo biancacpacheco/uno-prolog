@@ -123,28 +123,31 @@ jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
     writeln('\n\nSuas cartas:'), writeln(Mao), nl,
     % existemCartasPossiveis([], Mesa),
     % write(Possibilidade),
-    existemCartasPossiveis(Mao, Mesa) -> 
-                                (write('Qual carta deseja jogar? '), read(NumCarta),
+    (existemCartasPossiveis(Mao, Mesa) -> 
+                                write('Qual carta deseja jogar? '), read(NumCarta),
                                 nth1(NumCarta, Mao, CartaJogada),
                                 writeln(CartaJogada),
                                 writeln(Mao),
-                                delete(Mao, CartaJogada, NovaMao), %delete(Elemento, Lista, ListaSemElemento)
-                                writeln(NovaMao), nl,
-                                NovasMaos = [NovaMao|MaosBots],
-                                writeln(NovasMaos), nl,
-                                NovoDescarte = [CartaJogada|Descarte],
-                                writeln(NovoDescarte), nl,
-                                NovoBaralho = Baralho,
-                            writeln(NovoBaralho), nl)
+                                (ehValida(CartaJogada, Mesa) ->
+                                                                delete(Mao, CartaJogada, NovaMao), %delete(Elemento, Lista, ListaSemElemento)
+                                                                writeln(NovaMao), nl,
+                                                                NovasMaos = [NovaMao|MaosBots],
+                                                                writeln(NovasMaos), nl,
+                                                                NovoDescarte = [CartaJogada|Descarte],
+                                                                writeln(NovoDescarte), nl,
+                                                                NovoBaralho = Baralho,
+                                                                writeln(NovoBaralho), nl
+                                                            ;   
+                                                                writeln('Escolha uma carta válida!\n'),
+                                                                jogadorEscolhe(Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho))
                             ;
-                                (writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('), nl,
-                                ehValida(Topo,Mesa) -> (append([Topo],Descarte, NovoDescarte), 
-                                                        delete(Topo, Baralho, NovoBaralho), NovasMaos = [Mao|MaosBots]) ;
-                                
-                                                    append([Topo], Mao, NovaMao),
-                                                    delete(Topo, Baralho, NovoBaralho),
-                                                    NovasMaos = [NovaMao|MaosBots],
-                                                    NovoDescarte = Descarte).
+                                writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('), nl,
+                                writeln('Você não possui cartas para jogar nesta rodada e receberá uma nova carta do baralho :('),
+                                write('Pressione qualquer tecla para continuar...'), read(_), nl,
+                                append([Topo], Mao, NovaMao),
+                                delete(Topo, Baralho, NovoBaralho),
+                                NovasMaos = [NovaMao|MaosBots],
+                                NovoDescarte = Descarte).
 
 
 botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho):-
@@ -190,7 +193,6 @@ jogaPrimeiraPossivel([M|Resto],Mesa,CartaAtual,IndiceNaMao) :- ehValida(M,Mesa) 
                                                                                 ;
                                                                                 NewCartaAtual is CartaAtual + 1,
                                                                                 jogaPrimeiraPossivel(Resto,Mesa,NewCartaAtual,IndiceNaMao). 
-
 
 existemCartasPossiveis([], _) :- fail.
 existemCartasPossiveis([Carta|Resto], Mesa) :- ehValida(Carta, Mesa) ; existemCartasPossiveis(Resto, Mesa).
