@@ -15,7 +15,7 @@ write('\n(4) sair do jogo\n'),
 read(Opcao), verificaOpcao(Opcao).
 
 
-verificaOpcao(1) :- writeln('Vamos começar!\n Olha o baralho:'),
+verificaOpcao(1) :- writeln('Vamos começar!'),
                     start(), !.
 verificaOpcao(2) :- placar, !.
 verificaOpcao(3) :- regrasJogo, !.
@@ -74,7 +74,6 @@ joga(Baralho, Maos, Descarte, JogDaVez, NumJog, EndGame, Inverte):-
                      ; botEscolhe(JogDaVez, Maos, Descarte, Baralho, NovasMaos, NovoDescarte, NovoBaralho)),
     getMao(NovasMaos, JogDaVez, Mao),
     length(Mao, Tamanho),
-    write('Novo descarte: '), writeln(NovoDescarte), nl,
     verificaMao(Tamanho, NovoEndGame),
     (NovoEndGame = 0 -> 
                       writeln('O jogo continua!'),
@@ -203,8 +202,8 @@ verificaMao(_, EndGame):-
 quantJogadores(N) :-
     write('Você gostaria de jogar contra 2 ou contra 3 bots? '), nl,
     read(NBots),
-    N is NBots+1,
-    writeln(N).
+    N is NBots+1.
+
 
 % Chama a regra de separar cartas, definindo a quantidade de cartas por jogador como sendo 7
 distribuiMaos(Baralho, N, Maos, NovoBaralho) :-
